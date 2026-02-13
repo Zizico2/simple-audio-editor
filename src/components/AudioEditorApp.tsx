@@ -38,12 +38,12 @@ const sectionTitleStyles = cva([
   "text-[0.85rem] font-semibold mb-3 text-(--foreground-muted) uppercase tracking-wide",
 ]);
 const controlRowStyles = cva(["flex items-center gap-3 flex-wrap"]);
-const rangeContainerStyles = cva(["flex flex-col gap-1 flex-1 min-w-[140px]"]);
+const rangeContainerStyles = cva(["flex flex-col gap-1 flex-1 min-w-35"]);
 const rangeInputStyles = cva([
   "w-full shadow-none inset-shadow-none ring-0 inset-ring-0",
 ]);
 const rangeValueStyles = cva([
-  "text-[0.75rem] text-(--foreground-muted) tabular-nums text-right min-w-[4rem]",
+  "text-[0.75rem] text-(--foreground-muted) tabular-nums text-right min-w-16",
 ]);
 const playbackBarStyles = cva([
   "flex items-center gap-3 mb-3 p-3 rounded-lg",
@@ -409,7 +409,7 @@ export default function AudioEditorApp() {
           {/* Fade In */}
           <div className={sectionStyles()}>
             <div className="flex items-center justify-between mb-3">
-              <p className={`${sectionTitleStyles()} !mb-0`}>Fade In</p>
+              <p className={`${sectionTitleStyles()} mb-0!`}>Fade In</p>
               <Switch
                 size="sm"
                 checked={settings.fadeIn.enabled}
@@ -443,7 +443,7 @@ export default function AudioEditorApp() {
                   </div>
                 </div>
 
-                <div className="min-w-[140px]">
+                <div className="min-w-35">
                   <Label>Curve</Label>
                   <Select
                     className="mt-1"
@@ -466,7 +466,7 @@ export default function AudioEditorApp() {
           {/* Fade Out */}
           <div className={sectionStyles()}>
             <div className="flex items-center justify-between mb-3">
-              <p className={`${sectionTitleStyles()} !mb-0`}>Fade Out</p>
+              <p className={`${sectionTitleStyles()} mb-0!`}>Fade Out</p>
               <Switch
                 size="sm"
                 checked={settings.fadeOut.enabled}
@@ -500,7 +500,7 @@ export default function AudioEditorApp() {
                   </div>
                 </div>
 
-                <div className="min-w-[140px]">
+                <div className="min-w-35">
                   <Label>Curve</Label>
                   <Select
                     className="mt-1"
