@@ -20,6 +20,7 @@ import {
 } from "../utils/audioProcessing";
 import AudioUpload from "./AudioUpload";
 import WaveformDisplay from "./WaveformDisplay";
+import { Input } from "@cloudflare/kumo";
 
 interface AudioData {
   file: File;
@@ -39,20 +40,7 @@ const sectionTitleStyles = cva([
 const controlRowStyles = cva(["flex items-center gap-3 flex-wrap"]);
 const rangeContainerStyles = cva(["flex flex-col gap-1 flex-1 min-w-[140px]"]);
 const rangeInputStyles = cva([
-  "w-full h-1.5 rounded-full appearance-none cursor-pointer",
-  "bg-(--border-faint)",
-  "[&::-webkit-slider-thumb]:appearance-none",
-  "[&::-webkit-slider-thumb]:w-3.5",
-  "[&::-webkit-slider-thumb]:h-3.5",
-  "[&::-webkit-slider-thumb]:rounded-full",
-  "[&::-webkit-slider-thumb]:bg-(--accent)",
-  "[&::-webkit-slider-thumb]:cursor-pointer",
-  "[&::-moz-range-thumb]:w-3.5",
-  "[&::-moz-range-thumb]:h-3.5",
-  "[&::-moz-range-thumb]:rounded-full",
-  "[&::-moz-range-thumb]:bg-(--accent)",
-  "[&::-moz-range-thumb]:border-none",
-  "[&::-moz-range-thumb]:cursor-pointer",
+  "w-full outline-none shadow-none inset-shadow-none ring-0 inset-ring-0",
 ]);
 const rangeValueStyles = cva([
   "text-[0.75rem] text-(--foreground-muted) tabular-nums text-right min-w-[4rem]",
@@ -348,7 +336,7 @@ export default function AudioEditorApp() {
               <div className={rangeContainerStyles()}>
                 <Label>Start</Label>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="range"
                     min={0}
                     max={duration}
@@ -371,7 +359,7 @@ export default function AudioEditorApp() {
               <div className={rangeContainerStyles()}>
                 <Label>End</Label>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="range"
                     min={0}
                     max={duration}
@@ -399,7 +387,7 @@ export default function AudioEditorApp() {
             <div className={controlRowStyles()}>
               <div className={rangeContainerStyles()}>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="range"
                     min={0}
                     max={2}
@@ -436,7 +424,7 @@ export default function AudioEditorApp() {
                 <div className={rangeContainerStyles()}>
                   <Label>Duration</Label>
                   <div className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="range"
                       min={0.01}
                       max={Math.min(10, settings.cropEnd - settings.cropStart)}
@@ -493,7 +481,7 @@ export default function AudioEditorApp() {
                 <div className={rangeContainerStyles()}>
                   <Label>Duration</Label>
                   <div className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="range"
                       min={0.01}
                       max={Math.min(10, settings.cropEnd - settings.cropStart)}
