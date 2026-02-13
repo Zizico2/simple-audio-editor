@@ -8,7 +8,7 @@ import {
   buttonGroupStyles,
   infoTextStyles,
   toolbarStyles,
-} from "./AudioEditorStyles";
+} from "./audioEditorStyles";
 
 interface AudioToolbarProps {
   audioData: { file: File; buffer: AudioBuffer } | null;

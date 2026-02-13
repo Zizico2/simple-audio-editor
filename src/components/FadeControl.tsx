@@ -10,7 +10,7 @@ import {
   rangeValueStyles,
   sectionStyles,
   sectionTitleStyles,
-} from "./AudioEditorStyles";
+} from "./audioEditorStyles";
 
 const EASE_CURVES: { value: EaseCurve; label: string }[] = [
   { value: "linear", label: "Linear" },

@@ -8,7 +8,7 @@ import {
   rangeValueStyles,
   sectionStyles,
   sectionTitleStyles,
-} from "./AudioEditorStyles";
+} from "./audioEditorStyles";
 
 interface CropControlsProps {
   duration: number;

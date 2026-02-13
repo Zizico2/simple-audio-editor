@@ -7,7 +7,7 @@ import {
   rangeValueStyles,
   sectionStyles,
   sectionTitleStyles,
-} from "./AudioEditorStyles";
+} from "./audioEditorStyles";
 
 interface VolumeControlProps {
   settings: AudioEditSettings;
