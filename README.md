@@ -24,7 +24,7 @@ A lightweight, client-side audio editing tool built with modern web technologies
 | Runtime | [Cloudflare Workers](https://workers.cloudflare.com/) (edge) |
 | Package Manager | [Bun](https://bun.sh/) |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com/) + [class-variance-authority](https://cva.style/) |
-| UI Components | [Kumo](https://github.com/cloudflare/kumo) (`Button`, `Select`, `Switch`, `Label`) |
+| UI Components | [Kumo](https://github.com/cloudflare/kumo) (`Button`, `Select`, `Switch`, `Label`, `Input (range)`) |
 | Linting & Formatting | [Biome](https://biomejs.dev/) |
 | Deployment | [Cloudflare Workers](https://workers.cloudflare.com/) via [OpenNext](https://opennext.js.org/) |
 | CI/CD | GitHub Actions |
