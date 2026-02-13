@@ -4,13 +4,16 @@ import { Button } from "@cloudflare/kumo/components/button";
 import { Label } from "@cloudflare/kumo/components/label";
 import { Select } from "@cloudflare/kumo/components/select";
 import { Switch } from "@cloudflare/kumo/components/switch";
+import { Tooltip } from "@cloudflare/kumo/components/tooltip";
 import { cva } from "class-variance-authority";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   type AudioEditSettings,
-  audioBufferToWav,
   decodeAudioFile,
   type EaseCurve,
+  type ExportFormat,
+  exportAudio,
+  FORMAT_DESCRIPTIONS,
   formatTime,
   getDefaultSettings,
   processAudio,
@@ -72,7 +75,8 @@ const EASE_CURVES: { value: EaseCurve; label: string }[] = [
 
 export default function AudioEditorApp() {
   const [audioData, setAudioData] = useState<AudioData | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isOpusLoading, setIsOpusLoading] = useState(false);
+  const [isWavLoading, setIsWavLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState<AudioEditSettings | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -193,19 +197,20 @@ export default function AudioEditorApp() {
     setPlaybackPosition(clampedTime / audioData.buffer.duration);
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (format: ExportFormat) => {
     if (!audioData || !settings) return;
 
-    setIsProcessing(true);
+    const setLoading = format === "opus" ? setIsOpusLoading : setIsWavLoading;
+    setLoading(true);
     try {
       const processedBuffer = await processAudio(audioData.buffer, settings);
-      const wavBlob = audioBufferToWav(processedBuffer);
+      const { blob, extension } = await exportAudio(processedBuffer, format);
 
-      const url = URL.createObjectURL(wavBlob);
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       const nameWithoutExt = audioData.file.name.replace(/\.[^.]+$/, "");
       link.href = url;
-      link.download = `${nameWithoutExt}-edited.wav`;
+      link.download = `${nameWithoutExt}-edited.${extension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -214,7 +219,7 @@ export default function AudioEditorApp() {
       console.error("Export error:", err);
       alert("Failed to export audio");
     } finally {
-      setIsProcessing(false);
+      setLoading(false);
     }
   };
 
@@ -267,19 +272,33 @@ export default function AudioEditorApp() {
         </p>
 
         <div className={buttonGroupStyles()}>
-          <Button
-            onClick={handleDownload}
-            disabled={isProcessing || !audioData}
-            type="button"
-            variant="secondary"
-            loading={isProcessing}
-          >
-            Export WAV
-          </Button>
+          <Tooltip content={FORMAT_DESCRIPTIONS.opus} side="bottom" asChild>
+            <Button
+              onClick={() => handleDownload("opus")}
+              disabled={isOpusLoading || isWavLoading || !audioData}
+              type="button"
+              variant="secondary"
+              loading={isOpusLoading}
+            >
+              Export Opus
+            </Button>
+          </Tooltip>
+
+          <Tooltip content={FORMAT_DESCRIPTIONS.wav} side="bottom" asChild>
+            <Button
+              onClick={() => handleDownload("wav")}
+              disabled={isOpusLoading || isWavLoading || !audioData}
+              type="button"
+              variant="secondary"
+              loading={isWavLoading}
+            >
+              Export WAV
+            </Button>
+          </Tooltip>
 
           <Button
             onClick={handleReset}
-            disabled={!audioData}
+            disabled={!audioData || isOpusLoading || isWavLoading}
             type="button"
             variant="secondary-destructive"
           >

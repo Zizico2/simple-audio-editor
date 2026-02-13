@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { TooltipProvider } from "@cloudflare/kumo";
 
 export const metadata: Metadata = {
   title: "Audio Editor",
@@ -29,7 +30,7 @@ export default async function RootLayout({
             })();
           `}
         </Script>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );

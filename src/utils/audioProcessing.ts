@@ -1,3 +1,10 @@
+export type ExportFormat = "wav" | "opus";
+
+export const FORMAT_DESCRIPTIONS: Record<ExportFormat, string> = {
+  wav: "Lossless, uncompressed audio. Larger file size but no quality loss.",
+  opus: "Compressed audio (WebM/Opus). Much smaller file size with near-transparent quality.",
+};
+
 export type EaseCurve = "linear" | "exponential" | "logarithmic" | "sCurve";
 
 export interface AudioEditSettings {
@@ -247,6 +254,74 @@ function writeString(view: DataView, offset: number, str: string) {
   for (let i = 0; i < str.length; i++) {
     view.setUint8(offset + i, str.charCodeAt(i));
   }
+}
+
+/**
+ * Encode an AudioBuffer to Opus in a WebM container using MediaRecorder.
+ * Uses only web standard APIs — no external libraries.
+ */
+export async function audioBufferToOpus(buffer: AudioBuffer): Promise<Blob> {
+  const ctx = new AudioContext({ sampleRate: buffer.sampleRate });
+
+  try {
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+
+    const dest = ctx.createMediaStreamDestination();
+    source.connect(dest);
+
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+      ? "audio/webm;codecs=opus"
+      : "audio/webm";
+
+    const recorder = new MediaRecorder(dest.stream, { mimeType });
+    const chunks: Blob[] = [];
+
+    const recordingDone = new Promise<Blob>((resolve, reject) => {
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      recorder.onstop = () => {
+        resolve(new Blob(chunks, { type: mimeType }));
+      };
+      recorder.onerror = () => reject(new Error("MediaRecorder error"));
+    });
+
+    recorder.start();
+    source.start(0);
+
+    // Stop recording when the source finishes
+    source.onended = () => {
+      recorder.stop();
+    };
+
+    // Safety timeout in case onended doesn't fire
+    const timeout = setTimeout(
+      () => {
+        if (recorder.state !== "inactive") recorder.stop();
+      },
+      (buffer.duration + 1) * 1000,
+    );
+
+    const blob = await recordingDone;
+    clearTimeout(timeout);
+    return blob;
+  } finally {
+    await ctx.close();
+  }
+}
+
+/**
+ * Export an AudioBuffer in the specified format
+ */
+export async function exportAudio(
+  buffer: AudioBuffer,
+  format: ExportFormat,
+): Promise<{ blob: Blob; extension: string }> {
+  if (format === "opus") {
+    return { blob: await audioBufferToOpus(buffer), extension: "webm" };
+  }
+  return { blob: audioBufferToWav(buffer), extension: "wav" };
 }
 
 /**
