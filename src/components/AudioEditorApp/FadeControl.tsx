@@ -2,7 +2,7 @@ import { Input } from "@cloudflare/kumo";
 import { Label } from "@cloudflare/kumo/components/label";
 import { Select } from "@cloudflare/kumo/components/select";
 import { Switch } from "@cloudflare/kumo/components/switch";
-import type { AudioEditSettings, EaseCurve } from "../utils/audioProcessing";
+import type { AudioEditSettings, EaseCurve } from "../../utils/audioProcessing";
 import {
   fadeControlsStyles,
   rangeContainerStyles,

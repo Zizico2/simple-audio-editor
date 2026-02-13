@@ -1,5 +1,5 @@
 import { Input } from "@cloudflare/kumo";
-import type { AudioEditSettings } from "../utils/audioProcessing";
+import type { AudioEditSettings } from "../../utils/audioProcessing";
 import {
   controlRowStyles,
   rangeContainerStyles,

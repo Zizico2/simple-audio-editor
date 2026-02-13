@@ -2,8 +2,8 @@
 
 import { cva } from "class-variance-authority";
 import { useEffect, useRef } from "react";
-import type { AudioEditSettings } from "../utils/audioProcessing";
-import { extractWaveformPeaks, formatTime } from "../utils/audioProcessing";
+import type { AudioEditSettings } from "../../utils/audioProcessing";
+import { extractWaveformPeaks, formatTime } from "../../utils/audioProcessing";
 
 interface WaveformDisplayProps {
   audioBuffer: AudioBuffer;

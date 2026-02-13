@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { AudioEditSettings, ExportFormat } from "../utils/audioProcessing";
+import type {
+  AudioEditSettings,
+  ExportFormat,
+} from "../../utils/audioProcessing";
 import {
   decodeAudioFile,
   exportAudio,
   getDefaultSettings,
   processAudio,
-} from "../utils/audioProcessing";
+} from "../../utils/audioProcessing";
 import AudioToolbar from "./AudioToolbar";
 import AudioUpload from "./AudioUpload";
 import CropControls from "./CropControls";

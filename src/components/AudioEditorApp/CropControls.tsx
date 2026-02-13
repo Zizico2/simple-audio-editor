@@ -1,6 +1,9 @@
 import { Input } from "@cloudflare/kumo";
 import { Label } from "@cloudflare/kumo/components/label";
-import { type AudioEditSettings, formatTime } from "../utils/audioProcessing";
+import {
+  type AudioEditSettings,
+  formatTime,
+} from "../../utils/audioProcessing";
 import {
   controlRowStyles,
   rangeContainerStyles,

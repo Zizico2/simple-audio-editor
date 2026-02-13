@@ -1,5 +1,5 @@
 import { Button } from "@cloudflare/kumo/components/button";
-import { formatTime } from "../utils/audioProcessing";
+import { formatTime } from "../../utils/audioProcessing";
 import { playbackBarStyles, timeDisplayStyles } from "./audioEditorStyles";
 
 interface PlaybackControlsProps {

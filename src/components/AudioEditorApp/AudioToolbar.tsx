@@ -3,7 +3,7 @@ import { Tooltip } from "@cloudflare/kumo/components/tooltip";
 import {
   type ExportFormat,
   FORMAT_DESCRIPTIONS,
-} from "../utils/audioProcessing";
+} from "../../utils/audioProcessing";
 import {
   buttonGroupStyles,
   infoTextStyles,
