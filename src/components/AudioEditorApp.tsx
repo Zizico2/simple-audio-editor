@@ -40,7 +40,7 @@ const sectionTitleStyles = cva([
 const controlRowStyles = cva(["flex items-center gap-3 flex-wrap"]);
 const rangeContainerStyles = cva(["flex flex-col gap-1 flex-1 min-w-[140px]"]);
 const rangeInputStyles = cva([
-  "w-full outline-none shadow-none inset-shadow-none ring-0 inset-ring-0",
+  "w-full shadow-none inset-shadow-none ring-0 inset-ring-0",
 ]);
 const rangeValueStyles = cva([
   "text-[0.75rem] text-(--foreground-muted) tabular-nums text-right min-w-[4rem]",
