@@ -1,7 +1,7 @@
 "use client";
 
 import { cva } from "class-variance-authority";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { AudioEditSettings } from "../utils/audioProcessing";
 import { extractWaveformPeaks, formatTime } from "../utils/audioProcessing";
 
@@ -30,134 +30,134 @@ export default function WaveformDisplay({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  useEffect(() => {
+    const draw = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-    const width = rect.width;
-    const height = rect.height;
-    const midY = height / 2;
+      const width = rect.width;
+      const height = rect.height;
+      const midY = height / 2;
 
-    ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height);
 
-    const numBuckets = Math.floor(width);
-    const { positive, negative } = extractWaveformPeaks(
-      audioBuffer,
-      numBuckets,
-    );
+      const numBuckets = Math.floor(width);
+      const { positive, negative } = extractWaveformPeaks(
+        audioBuffer,
+        numBuckets,
+      );
 
-    const totalDuration = audioBuffer.duration;
-    const cropStartPx = (settings.cropStart / totalDuration) * width;
-    const cropEndPx = (settings.cropEnd / totalDuration) * width;
+      const totalDuration = audioBuffer.duration;
+      const cropStartPx = (settings.cropStart / totalDuration) * width;
+      const cropEndPx = (settings.cropEnd / totalDuration) * width;
 
-    // Draw dimmed region outside crop
-    const isDark =
-      document.documentElement.getAttribute("data-mode") === "dark";
-    ctx.fillStyle = isDark
-      ? "rgba(255, 255, 255, 0.05)"
-      : "rgba(0, 0, 0, 0.06)";
-    ctx.fillRect(0, 0, cropStartPx, height);
-    ctx.fillRect(cropEndPx, 0, width - cropEndPx, height);
+      // Draw dimmed region outside crop
+      const isDark =
+        document.documentElement.getAttribute("data-mode") === "dark";
+      ctx.fillStyle = isDark
+        ? "rgba(255, 255, 255, 0.05)"
+        : "rgba(0, 0, 0, 0.06)";
+      ctx.fillRect(0, 0, cropStartPx, height);
+      ctx.fillRect(cropEndPx, 0, width - cropEndPx, height);
 
-    // Draw waveform
-    for (let i = 0; i < numBuckets; i++) {
-      const x = i;
-      const isInCrop = x >= cropStartPx && x <= cropEndPx;
+      // Draw waveform
+      for (let i = 0; i < numBuckets; i++) {
+        const x = i;
+        const isInCrop = x >= cropStartPx && x <= cropEndPx;
 
-      if (isInCrop) {
-        ctx.fillStyle = isDark
-          ? "rgba(100, 160, 255, 0.8)"
-          : "rgba(0, 112, 243, 0.7)";
-      } else {
-        ctx.fillStyle = isDark
-          ? "rgba(255, 255, 255, 0.15)"
-          : "rgba(0, 0, 0, 0.15)";
+        if (isInCrop) {
+          ctx.fillStyle = isDark
+            ? "rgba(100, 160, 255, 0.8)"
+            : "rgba(0, 112, 243, 0.7)";
+        } else {
+          ctx.fillStyle = isDark
+            ? "rgba(255, 255, 255, 0.15)"
+            : "rgba(0, 0, 0, 0.15)";
+        }
+
+        const posHeight = positive[i] * midY * 0.9;
+        const negHeight = -negative[i] * midY * 0.9;
+
+        ctx.fillRect(x, midY - posHeight, 1, posHeight + negHeight);
       }
 
-      const posHeight = positive[i] * midY * 0.9;
-      const negHeight = -negative[i] * midY * 0.9;
+      // Draw fade regions
+      if (settings.fadeIn.enabled && settings.fadeIn.duration > 0) {
+        const fadeEndPx =
+          cropStartPx + (settings.fadeIn.duration / totalDuration) * width;
+        const gradient = ctx.createLinearGradient(cropStartPx, 0, fadeEndPx, 0);
+        gradient.addColorStop(
+          0,
+          isDark ? "rgba(255, 200, 50, 0.25)" : "rgba(255, 160, 0, 0.2)",
+        );
+        gradient.addColorStop(1, "transparent");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(cropStartPx, 0, fadeEndPx - cropStartPx, height);
+      }
 
-      ctx.fillRect(x, midY - posHeight, 1, posHeight + negHeight);
-    }
+      if (settings.fadeOut.enabled && settings.fadeOut.duration > 0) {
+        const fadeStartPx =
+          cropEndPx - (settings.fadeOut.duration / totalDuration) * width;
+        const gradient = ctx.createLinearGradient(fadeStartPx, 0, cropEndPx, 0);
+        gradient.addColorStop(0, "transparent");
+        gradient.addColorStop(
+          1,
+          isDark ? "rgba(255, 200, 50, 0.25)" : "rgba(255, 160, 0, 0.2)",
+        );
+        ctx.fillStyle = gradient;
+        ctx.fillRect(fadeStartPx, 0, cropEndPx - fadeStartPx, height);
+      }
 
-    // Draw fade regions
-    if (settings.fadeIn.enabled && settings.fadeIn.duration > 0) {
-      const fadeEndPx =
-        cropStartPx + (settings.fadeIn.duration / totalDuration) * width;
-      const gradient = ctx.createLinearGradient(cropStartPx, 0, fadeEndPx, 0);
-      gradient.addColorStop(
-        0,
-        isDark ? "rgba(255, 200, 50, 0.25)" : "rgba(255, 160, 0, 0.2)",
-      );
-      gradient.addColorStop(1, "transparent");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(cropStartPx, 0, fadeEndPx - cropStartPx, height);
-    }
+      // Draw crop boundary lines
+      ctx.strokeStyle = isDark
+        ? "rgba(255, 255, 255, 0.4)"
+        : "rgba(0, 0, 0, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
 
-    if (settings.fadeOut.enabled && settings.fadeOut.duration > 0) {
-      const fadeStartPx =
-        cropEndPx - (settings.fadeOut.duration / totalDuration) * width;
-      const gradient = ctx.createLinearGradient(fadeStartPx, 0, cropEndPx, 0);
-      gradient.addColorStop(0, "transparent");
-      gradient.addColorStop(
-        1,
-        isDark ? "rgba(255, 200, 50, 0.25)" : "rgba(255, 160, 0, 0.2)",
-      );
-      ctx.fillStyle = gradient;
-      ctx.fillRect(fadeStartPx, 0, cropEndPx - fadeStartPx, height);
-    }
-
-    // Draw crop boundary lines
-    ctx.strokeStyle = isDark
-      ? "rgba(255, 255, 255, 0.4)"
-      : "rgba(0, 0, 0, 0.3)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 3]);
-
-    ctx.beginPath();
-    ctx.moveTo(cropStartPx, 0);
-    ctx.lineTo(cropStartPx, height);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(cropEndPx, 0);
-    ctx.lineTo(cropEndPx, height);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    // Draw playback position
-    if (playbackPosition > 0) {
-      const playPx = playbackPosition * width;
-      ctx.strokeStyle = isDark ? "#ffffff" : "#000000";
-      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(playPx, 0);
-      ctx.lineTo(playPx, height);
+      ctx.moveTo(cropStartPx, 0);
+      ctx.lineTo(cropStartPx, height);
       ctx.stroke();
-    }
 
-    // Draw center line
-    ctx.strokeStyle = isDark
-      ? "rgba(255, 255, 255, 0.08)"
-      : "rgba(0, 0, 0, 0.06)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, midY);
-    ctx.lineTo(width, midY);
-    ctx.stroke();
-  }, [audioBuffer, settings, playbackPosition]);
+      ctx.beginPath();
+      ctx.moveTo(cropEndPx, 0);
+      ctx.lineTo(cropEndPx, height);
+      ctx.stroke();
 
-  useEffect(() => {
+      ctx.setLineDash([]);
+
+      // Draw playback position
+      if (playbackPosition > 0) {
+        const playPx = playbackPosition * width;
+        ctx.strokeStyle = isDark ? "#ffffff" : "#000000";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(playPx, 0);
+        ctx.lineTo(playPx, height);
+        ctx.stroke();
+      }
+
+      // Draw center line
+      ctx.strokeStyle = isDark
+        ? "rgba(255, 255, 255, 0.08)"
+        : "rgba(0, 0, 0, 0.06)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, midY);
+      ctx.lineTo(width, midY);
+      ctx.stroke();
+    };
+
     draw();
 
     const resizeObserver = new ResizeObserver(() => draw());
@@ -166,7 +166,7 @@ export default function WaveformDisplay({
     }
 
     return () => resizeObserver.disconnect();
-  }, [draw]);
+  });
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

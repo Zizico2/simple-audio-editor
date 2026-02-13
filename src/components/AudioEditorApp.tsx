@@ -1,7 +1,6 @@
 "use client";
 
-// ...existing code...
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AudioEditSettings, ExportFormat } from "../utils/audioProcessing";
 import {
   decodeAudioFile,
@@ -37,7 +36,7 @@ export default function AudioEditorApp() {
   const playbackOffsetRef = useRef(0);
   const animFrameRef = useRef<number>(0);
 
-  const stopPlayback = useCallback(() => {
+  const stopPlayback = () => {
     if (sourceNodeRef.current) {
       try {
         sourceNodeRef.current.stop();
@@ -51,7 +50,7 @@ export default function AudioEditorApp() {
       animFrameRef.current = 0;
     }
     setIsPlaying(false);
-  }, []);
+  };
 
   // Cleanup on unmount
   useEffect(() => {
@@ -61,6 +60,7 @@ export default function AudioEditorApp() {
         audioCtxRef.current.close();
       }
     };
+    // biome-ignore lint/correctness/useExhaustiveDependencies: stopPlaying is stable since react compiler
   }, [stopPlayback]);
 
   const handleAudioSelected = async (file: File) => {
