@@ -1,0 +1,70 @@
+@import "@cloudflare/kumo/styles/tailwind";
+@import "tailwindcss";
+@source "../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+    --foreground-muted: color-mix(in srgb, var(--foreground) 65%, transparent);
+    --foreground-subtle: color-mix(in srgb, var(--foreground) 60%, transparent);
+    --border-faint: color-mix(in srgb, var(--foreground) 30%, transparent);
+    --border-hover: color-mix(in srgb, var(--foreground) 50%, transparent);
+    --surface-tint: color-mix(in srgb, var(--foreground) 4%, var(--background));
+    --accent: #0070f3;
+    --accent-tint: color-mix(in srgb, #0070f3 10%, var(--background));
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      color-scheme: dark;
+      --foreground: #ededed;
+    }
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@utility page-edge-fade {
+  &::after {
+    content: "";
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(2.4rem + env(safe-area-inset-right));
+    background: rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &::after {
+      background: rgba(255, 255, 255, 0.03);
+    }
+  }
+
+  @media (min-width: 640px) {
+    &::after {
+      display: none;
+    }
+  }
+}
