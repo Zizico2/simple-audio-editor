@@ -2,7 +2,7 @@ export type ExportFormat = "wav" | "opus";
 
 export const FORMAT_DESCRIPTIONS: Record<ExportFormat, string> = {
   wav: "Lossless, uncompressed audio. Larger file size but no quality loss.",
-  opus: "Compressed audio (WebM/Opus). Much smaller file size with near-transparent quality.",
+  opus: "Compressed audio (Opus). Much smaller file size with near-transparent quality.",
 };
 
 export type EaseCurve = "linear" | "exponential" | "logarithmic" | "sCurve";
@@ -257,7 +257,24 @@ function writeString(view: DataView, offset: number, str: string) {
 }
 
 /**
- * Encode an AudioBuffer to Opus in a WebM container using MediaRecorder.
+ * Pick the best supported MIME type for Opus recording.
+ * Preference: OGG > MP4 > WebM (WebM is last because some apps
+ * like Telegram assume WebM always contains video).
+ */
+function pickOpusMimeType(): string {
+  const candidates = [
+    "audio/mp4;codecs=opus",
+    "audio/ogg;codecs=opus",
+    "audio/webm;codecs=opus",
+    "audio/webm",
+  ];
+  return (
+    candidates.find((t) => MediaRecorder.isTypeSupported(t)) ?? candidates[3]
+  );
+}
+
+/**
+ * Encode an AudioBuffer to Opus using MediaRecorder.
  * Uses only web standard APIs — no external libraries.
  */
 export async function audioBufferToOpus(buffer: AudioBuffer): Promise<Blob> {
@@ -270,9 +287,7 @@ export async function audioBufferToOpus(buffer: AudioBuffer): Promise<Blob> {
     const dest = ctx.createMediaStreamDestination();
     source.connect(dest);
 
-    const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-      ? "audio/webm;codecs=opus"
-      : "audio/webm";
+    const mimeType = pickOpusMimeType();
 
     const recorder = new MediaRecorder(dest.stream, { mimeType });
     const chunks: Blob[] = [];
@@ -319,7 +334,11 @@ export async function exportAudio(
   format: ExportFormat,
 ): Promise<{ blob: Blob; extension: string }> {
   if (format === "opus") {
-    return { blob: await audioBufferToOpus(buffer), extension: "webm" };
+    const blob = await audioBufferToOpus(buffer);
+    let extension = "webm";
+    if (blob.type.includes("ogg")) extension = "ogg";
+    else if (blob.type.includes("mp4")) extension = "m4a";
+    return { blob, extension };
   }
   return { blob: audioBufferToWav(buffer), extension: "wav" };
 }

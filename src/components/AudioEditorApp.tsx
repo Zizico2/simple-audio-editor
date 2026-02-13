@@ -280,7 +280,7 @@ export default function AudioEditorApp() {
               variant="secondary"
               loading={isOpusLoading}
             >
-              Export Opus
+              Export
             </Button>
           </Tooltip>
 
