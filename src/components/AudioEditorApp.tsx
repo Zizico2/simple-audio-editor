@@ -60,7 +60,7 @@ export default function AudioEditorApp() {
         audioCtxRef.current.close();
       }
     };
-    // biome-ignore lint/correctness/useExhaustiveDependencies: stopPlaying is stable since react compiler
+    // biome-ignore lint/correctness/useExhaustiveDependencies: stopPlayback is stable since react compiler
   }, [stopPlayback]);
 
   const handleAudioSelected = async (file: File) => {
