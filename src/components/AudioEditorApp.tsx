@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@cloudflare/kumo";
 import { Button } from "@cloudflare/kumo/components/button";
 import { Label } from "@cloudflare/kumo/components/label";
 import { Select } from "@cloudflare/kumo/components/select";
@@ -20,7 +21,6 @@ import {
 } from "../utils/audioProcessing";
 import AudioUpload from "./AudioUpload";
 import WaveformDisplay from "./WaveformDisplay";
-import { Input } from "@cloudflare/kumo";
 
 interface AudioData {
   file: File;
