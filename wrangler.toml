@@ -4,6 +4,10 @@ name = "simple-audio-editor"
 compatibility_date = "2026-02-10"
 compatibility_flags = [ "nodejs_compat" ]
 
+[[routes]]
+pattern = "simple-audio-editor.bernardobordadagua.com"
+custom_domain = true
+
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
