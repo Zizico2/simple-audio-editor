@@ -67,7 +67,8 @@ export default function AudioUpload({ onAudioSelected }: AudioUploadProps) {
           visibleWhen: "idle",
         })}
       >
-        Supports varies by browser. If loading does nothing, the file type may be unsupported. MP3 and WAV are widely supported.
+        Supports varies by browser. If loading does nothing, the file type may
+        be unsupported. MP3 and WAV are widely supported.
       </p>
       <p
         data-drag-active={isDragActive}
