@@ -67,7 +67,7 @@ export default function AudioUpload({ onAudioSelected }: AudioUploadProps) {
           visibleWhen: "idle",
         })}
       >
-        Supports MP3, WAV, OGG, FLAC, AAC, M4A
+        Supports varies by browser. If loading does nothing, the file type may be unsupported. MP3 and WAV are widely supported.
       </p>
       <p
         data-drag-active={isDragActive}
